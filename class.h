@@ -13,9 +13,9 @@
     extern const struct M_JOIN(_,_name_) *_name_()
 
 #define CLASS_COMPILE(_name_) \
-    void M_JOIN(_add_,_name_)(CLASS _name_*,char);\
-    void M_JOIN(_dtor2_,_name_)(CLASS _name_ *self){ M_FOREACH(_CLASS_DTR,M_JOIN(_CLASS_DECL,_name_)) }\
-    void M_JOIN(_ctor2_,_name_)(CLASS _name_ *self){ M_FOREACH(_CLASS_CTR,M_JOIN(_CLASS_DECL,_name_)) }\
+    void *M_JOIN(_add_,_name_)(CLASS _name_*,char);\
+    void M_JOIN(_dtor2_,_name_)(CLASS _name_ *self){ M_FOREACH(_CLASS_DTR,M_JOIN(_CLASS_DECL,_name_)) return; (void)self;}\
+    void *M_JOIN(_ctor2_,_name_)(CLASS _name_ *self){ M_FOREACH(_CLASS_CTR,M_JOIN(_CLASS_DECL,_name_)) return self;}\
     void M_JOIN(_dtor_,_name_)(void *self){\
         M_JOIN(_dtor2_,_name_)(self);\
         M_JOIN(_add_,_name_)(self,0);\
@@ -28,12 +28,14 @@
         if(self){\
             M_WHEN(_CLASS_BASE(_name_))(\
                 extern void *M_JOIN(_ctor_,_CLASS_BASE(_name_))(void*);\
-                M_JOIN(_ctor_,_CLASS_BASE(_name_))(self);\
+                if(!M_JOIN(_ctor_,_CLASS_BASE(_name_))(self)) return 0;\
             )\
-            M_JOIN(_ctor2_,_name_)(self);\
-            M_JOIN(_add_,_name_)(self,1);\
-            *(void**)self=M_JOIN(_dtor_,_name_);\
-        } return self;\
+            if(M_JOIN(_ctor2_,_name_)(self) && M_JOIN(_add_,_name_)(self,1)){\
+                *(void**)self=M_JOIN(_dtor_,_name_);\
+                return self;\
+            }\
+            M_JOIN(_dtor_,_name_)(self);\
+        } return 0;\
     }\
     const struct M_JOIN(_,_name_) *_name_(){\
         static struct M_JOIN(_,_name_) c[1]={{.constructor=(void*)1}};\
@@ -44,7 +46,7 @@
             c->constructor=(void*)M_IF(M_FOREACH(_CLASS_ABS,M_JOIN(_CLASS_DECL,_name_)))(0,_ctor_##_name_);\
         } return c;\
     }\
-    void M_JOIN(_add_,_name_)(CLASS _name_ *self,const char _____) _CLASS_COMPILE
+    void *M_JOIN(_add_,_name_)(CLASS _name_ *self,const char _____) _CLASS_COMPILE
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +108,7 @@
 
 #define _CLASS_BASE(_name_) M_FOREACH(_CLASS_INH,M_JOIN(_CLASS_DECL,_name_))
 
-#define _CLASS_COMPILE(...) {if(_____){M_FOREACH(_CLASS_CTR,__VA_ARGS__) return;}{M_FOREACH(_CLASS_DTR,__VA_ARGS__)}}
+#define _CLASS_COMPILE(...) {if(_____){M_FOREACH(_CLASS_CTR,__VA_ARGS__)}else{M_FOREACH(_CLASS_DTR,__VA_ARGS__)} return self;(void)self;}
 
 #define __CLASS_END() _CLASS_END
 #define _CLASS_END(_name_,...)\
