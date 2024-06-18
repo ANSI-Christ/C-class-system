@@ -41,7 +41,7 @@
             c->constructor=(void*)0;\
             M_WHEN(_CLASS_BASE(_name_))( _CLASS_BASE(_name_)(); )\
             _ctor_##_name_(c); _dtor_##_name_(c);\
-            M_WHEN(M_NOT(M_FOREACH(_CLASS_ABS,M_JOIN(_CLASS_DECL,_name_))))( c->constructor=(void*)_ctor_##_name_; )\
+            c->constructor=(void*)M_IF(M_FOREACH(_CLASS_ABS,M_JOIN(_CLASS_DECL,_name_)))(0,_ctor_##_name_);\
         } return c;\
     }\
     void M_JOIN(_add_,_name_)(CLASS _name_ *self,const char _____) _CLASS_COMPILE
