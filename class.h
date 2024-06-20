@@ -9,7 +9,7 @@
 
 #define CLASS_END(_name_,...) \
     CLASS _name_{void(*const destructor)(void*); _CLASS_LOOP(_CLASS_END(_name_))};\
-    struct M_JOIN(_,_name_){void*(*constructor)(void*); _CLASS_LOOP(_CLASS_END(_name_))};\
+    struct M_JOIN(_,_name_){CLASS _name_*(*constructor)(void*); _CLASS_LOOP(_CLASS_END(_name_))};\
     extern const struct M_JOIN(_,_name_) *_name_()
 
 #define CLASS_COMPILE(_name_) \
