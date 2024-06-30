@@ -9,7 +9,7 @@
 
 #define CLASS_END(_name_,...) \
     CLASS _name_{void(*const destructor)(void*); _CLASS_LOOP(_CLASS_END(_name_))};\
-    struct M_JOIN(_,_name_){CLASS _name_*(*constructor)(void*); _CLASS_LOOP(_CLASS_END(_name_))};\
+    struct M_JOIN(_,_name_){M_IF(M_FOREACH(_CLASS_ABS,M_JOIN(_CLASS_DECL,_name_)))(void *_##__LINE__##pad[1][1][1],CLASS _name_*(*constructor)(void*)); _CLASS_LOOP(_CLASS_END(_name_))};\
     extern const struct M_JOIN(_,_name_) *_name_()
 
 #define CLASS_COMPILE(_name_) \
@@ -38,12 +38,12 @@
         } return 0;\
     }\
     const struct M_JOIN(_,_name_) *_name_(){\
-        static struct M_JOIN(_,_name_) c[1]={{.constructor=(void*)1}};\
-        if(c->constructor==(void*)1){\
-            c->constructor=(void*)0;\
+        static struct M_JOIN(_,_name_) c[1]={{M_IF(M_FOREACH(_CLASS_ABS,M_JOIN(_CLASS_DECL,_name_)))({{{(void*)1}}},(void*)1)}};\
+        if(*(void**)c==(void*)1){\
+            *(void**)c=(void*)0;\
             M_WHEN(_CLASS_BASE(_name_))( _CLASS_BASE(_name_)(); )\
             _ctor_##_name_(c); _dtor_##_name_(c);\
-            c->constructor=(void*)M_IF(M_FOREACH(_CLASS_ABS,M_JOIN(_CLASS_DECL,_name_)))(0,_ctor_##_name_);\
+            *(void**)c=(void*)M_IF(M_FOREACH(_CLASS_ABS,M_JOIN(_CLASS_DECL,_name_)))(0,_ctor_##_name_);\
         } return c;\
     }\
     void *M_JOIN(_add_,_name_)(CLASS _name_ *self,const char _____) _CLASS_COMPILE
