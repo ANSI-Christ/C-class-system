@@ -19,14 +19,14 @@ void f1(CLASS A *p){
 }
 
 CLASS_COMPILE(A)(
-    constructor(
+    constructor(int a)(
         self->f=(void*)f1;
         self->s=malloc(2);
         self->s[1]=0;
-        self->s[0]='$';
-        self->bla=5;
+        self->s[0]='#';
+        self->bla=a;
     ),
-    destructor(
+    destructor()(
         free(self->s); self->s=NULL;\
     )
 )
@@ -35,9 +35,10 @@ CLASS_COMPILE(A)(
 
 #define CLASS_BEGIN__B \
     from(A),\
-    constructor(\
+    constructor(char c)(\
+        super(self,5);\
         self->f=(void*)f2;\
-        self->s[0]='@';\
+        self->s[0]=c;\
     ),\
     public(\
         void *b;\
@@ -57,14 +58,14 @@ int main()
 {
     {
         CLASS A c;
-        A()->constructor(&c);
+        A()->constructor(&c,4);
         c.f(&c);
         c.destructor(&c);
     }
     
     {
         CLASS A c;
-        B()->constructor(&c);
+        B()->constructor(&c,'$');
         c.f(&c);
         c.destructor(&c);
     }
