@@ -48,7 +48,7 @@
         } return c;\
     }\
     void *M_JOIN(_add_,_name_)(char _##__LINE_##ctr,CLASS _name_ *self _CLASS_ARGS_STD(_name_) ){\
-        _CLASS_SUPER(_name_) _CLASS_COMPILE
+        if(_##__LINE_##ctr){_CLASS_SUPER(_name_) _CLASS_COMPILE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -135,7 +135,7 @@
 #define _CLASS_ARGS_DEF(_name_)  M_FOREACH(__CLASS_ARGS_DEF,_name_,_CLASS_CTR_ARGS(_name_))
 #define _CLASS_ARGS_ZERO(_name_) M_FOREACH(__CLASS_ARGS_ZERO,_name_,_CLASS_CTR_ARGS(_name_))
 
-#define _CLASS_COMPILE(...) if(_##__LINE_##ctr){M_FOREACH(__CLASS_CTR_BODY,-,__VA_ARGS__)}else{M_FOREACH(__CLASS_DTR,-,__VA_ARGS__)}return self;}
+#define _CLASS_COMPILE(...) M_FOREACH(__CLASS_CTR_BODY,-,__VA_ARGS__)}else{M_FOREACH(__CLASS_DTR,-,__VA_ARGS__)}return self;}
 
 #define _CLASS_SUPER(_name_) \
     M_WHEN(_CLASS_EXT(_name_))(\
