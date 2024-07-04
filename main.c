@@ -63,11 +63,25 @@ int main()
         c.destructor(&c);
     }
     
-    {
+    if(0){
         CLASS A c;
+        B()->constructor(&c,'$'); // out of bounds sizeof(A) < sizeof(B)
+        c.f(&c);
+        c.destructor(&c);
+    }
+    
+    {
+        CLASS B c;
         B()->constructor(&c,'$');
         c.f(&c);
         c.destructor(&c);
+    }
+
+    {
+        CLASS A *c=B()->constructor(malloc(sizeof(CLASS B)),'%');
+        c->f(c);
+        c->destructor(c);
+        free(c);
     }
 
     return 0;
