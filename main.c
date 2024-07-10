@@ -5,6 +5,7 @@
 
 
 #define CLASS_BEGIN__A \
+    constructor(int a)(),\
     public(\
         void(*f)(void*);\
         char *s;\
@@ -19,7 +20,7 @@ void f1(CLASS A *p){
 }
 
 CLASS_COMPILE(A)(
-    constructor(int a)(
+    constructor()(
         self->f=(void*)f1;
         self->s=malloc(2);
         self->s[1]=0;
@@ -34,7 +35,7 @@ CLASS_COMPILE(A)(
 
 
 #define CLASS_BEGIN__B \
-    from(A),\
+    extends(A),\
     constructor(char c)(\
         super(self,5);\
         self->f=(void*)f2;\
