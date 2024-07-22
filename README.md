@@ -6,9 +6,9 @@ main.c contains 4 classes example and main.E contains code after preprocessing m
 
 Keywords:
  - constructor  (may have parameters)
- - destructor   (have empty parameters)
- - extends      (one parameter - )
- - abstract     ()
+ - destructor   (have empty list parameters)
+ - extends      (one parameter - base class)
+ - abstract     
  - public
  - private      (invisible in childs)
 
